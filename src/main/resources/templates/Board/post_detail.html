@@ -44,7 +44,7 @@
 
 
     <!-- 답변 반복 시작 -->
-    <div class="card my-3" th:each="postcomment : ${post.postCommentList}">
+    <div class="card my-3" th:each="postcomment : ${post.postCommentList}" th:if="${postcomment.parent == 0}">
         <a th:id="|postcomment_${postcomment.id}|"></a>
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;" th:text="${postcomment.content}"></div>
@@ -67,9 +67,6 @@
                     <span class="badge rounded-pill bg-success" th:text="${#lists.size(postcomment.likes)}"></span>
                 </a>
 
-                <a th:href="@{|/answer/create/${postcomment.id}|}" class="btn btn-sm btn-outline-secondary"
-                   sec:authorize="isAuthenticated()"
-                   th:text="답변"></a>
 
                 <a th:href="@{|/comment/modify/${postcomment.id}|}" class="btn btn-sm btn-outline-secondary"
                    sec:authorize="isAuthenticated()"
@@ -81,8 +78,67 @@
                    th:text="삭제"></a>
             </div>
         </div>
+
+        <div class="commend_sub_layout">
+            <div class="commend_sub" th:each="subComment : ${comment} "
+                 th:if="${subComment.parent == postcomment.id}">
+                <form th:action="@{|/comment/modify/${postcomment.id}|}" method="post">
+                    <input type="hidden" name="postid" th:value="${post.id}">
+                    <input type="hidden" name="comid" th:value="${subComment.id}">
+                    <a class="commend_sub_name" th:text="${subComment.customer.username}"></a>
+                    <label style="display : block; margin-bottom : 10px;">
+                        <input class="commend_sub_content" name="subcommend"
+                               th:value="${subComment.isDeleted ? '삭제된 댓글입니다.' : subComment.postcomment}"
+                               readonly>
+                    </label>
+<!--                    <a style="font-size : 10px; position : relative; left : 10px;"-->
+<!--                       th:text="${#temporals.format(subComment.modifyDate, 'yyyy-MM-dd HH:mm')}"></a>-->
+<!--                    <a class="commend_sub_upd" th:text="수정"-->
+<!--                       th:onclick="${subComment.cutomer.username == #authentication.getPrincipal().getUsername()} ? 'updatecomment(this)' : 'return false;'"></a>-->
+<!--                    <input class="commend_sub_sav" type="submit" th:value="저장"-->
+<!--                           th:disabled="${subComment.customer.username != #authentication.getPrincipal().getUsername()}">-->
+<!--                    <a class="commend_sub_del"-->
+<!--                       th:if="${subComment.customer.username == #authentication.getPrincipal().getUsername()}"-->
+<!--                       th:href="@{|/comment/delete/${postcomment.id}/${subComment.id}|}" th:text="삭제"></a>-->
+<!--                    <a class="commend_sub_del"-->
+<!--                       th:if="${subComment.user.username != #authentication.getPrincipal().getUsername()}"-->
+<!--                       th:text="삭제" onclick="return false;"></a>-->
+                </form>
+            </div>
+
+<!--            <form class="commend_sub_add" th:action="@{|/comment/subcomment/${postcomment.id}|}" method="post">-->
+<!--                <label class="commend_sub_text">-->
+<!--                    <input type="hidden" name="username"-->
+<!--                           th:value="${#authentication.getPrincipal().getUsername()}">-->
+<!--                    <a class="commend_sub_add_name"-->
+<!--                       th:text="${#authentication.getPrincipal().getUsername()}"></a>-->
+<!--                    <textarea class="commend_sub_write" name="commend"-->
+<!--                              placeholder="답글을 남겨보세요"></textarea>-->
+<!--                </label>-->
+<!--                <input type="hidden" name="postid" th:value="${post.id}">-->
+<!--                <input type="hidden" name="commentid" th:value="${comment != null ? comment.id : ''}" />-->
+<!--                <input class="commend_sub_add_btn" type="submit" value="등록">-->
+<!--            </form>-->
+            <form class="commend_sub_add" method="post" th:action="@{/comment/subcomment}" >
+                <label class="commend_sub_text">
+                    <input type="hidden" name="username"
+                           th:value="${#authentication.getPrincipal().getUsername()}">
+                    <a class="commend_sub_add_name"
+                       th:text="${#authentication.getPrincipal().getUsername()}"></a>
+                    <textarea class="commend_sub_write" name="content"
+                              placeholder="댓글을 남겨보세요"></textarea>
+                </label>
+                <input type="hidden" name="id" th:value="${post.id}">
+                <input type="text" name="commentid" th:value="${postcomment.id}" />
+
+                <input class="commend_sub_add_btn" type="submit" value="등록">
+            </form>
+        </div>
+
+
     </div>
     <!-- 답변 반복 끝  -->
+
 
     <!-- 답변 작성 -->
     <form th:action="@{|/comment/create/${post.id}|}" method="post" class="my-3" th:object="${postCommentForm}"

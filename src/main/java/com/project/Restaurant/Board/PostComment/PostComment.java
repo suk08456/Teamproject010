@@ -1,14 +1,14 @@
-package com.project.Restaurant.PostComment;
+package com.project.Restaurant.Board.PostComment;
 
-import com.project.Restaurant.CommentAnswer.Answer;
+
+import com.project.Restaurant.Board.Post.Post;
 import com.project.Restaurant.Member.consumer.Customer;
-import com.project.Restaurant.Post.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,11 +31,20 @@ public class PostComment {
   @ManyToOne
   private Post post;
 
-  @OneToMany(mappedBy = "postComment", cascade = CascadeType.REMOVE)
-  private List<Answer> answerList;
+
 
   private LocalDateTime modifyDate;
 
   @ManyToMany
   Set<Customer> likes;
+
+  @ColumnDefault("FALSE")
+  @Column(nullable = false)
+  private Boolean isDeleted;
+
+  @ColumnDefault("0")
+  private Long parent;
+
+
+
 }

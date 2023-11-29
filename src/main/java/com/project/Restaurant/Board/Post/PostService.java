@@ -1,9 +1,9 @@
-package com.project.Restaurant.Post;
+package com.project.Restaurant.Board.Post;
 
 
 import com.project.Restaurant.DataNotFoundException;
 import com.project.Restaurant.Member.consumer.Customer;
-import com.project.Restaurant.PostComment.PostComment;
+import com.project.Restaurant.Board.PostComment.PostComment;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,15 +11,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
-import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service

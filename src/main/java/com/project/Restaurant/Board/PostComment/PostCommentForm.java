@@ -1,4 +1,4 @@
-package com.project.Restaurant.PostComment;
+package com.project.Restaurant.Board.PostComment;
 
 
 import jakarta.validation.constraints.NotEmpty;

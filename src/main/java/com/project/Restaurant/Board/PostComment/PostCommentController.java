@@ -1,9 +1,9 @@
-package com.project.Restaurant.PostComment;
+package com.project.Restaurant.Board.PostComment;
 
+import com.project.Restaurant.Board.Post.Post;
+import com.project.Restaurant.Board.Post.PostService;
 import com.project.Restaurant.Member.consumer.Customer;
 import com.project.Restaurant.Member.consumer.CustomerService;
-import com.project.Restaurant.Post.Post;
-import com.project.Restaurant.Post.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.List;
 
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/comment")
 public class PostCommentController {
-
     private final PostCommentService postCommentService;
+
     private final PostService postService;
     private final CustomerService customerService;
 
@@ -37,13 +38,42 @@ public class PostCommentController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("post", post);
-            return "Post/post_detail";
+            return "Board/post_detail";
         }
 
         PostComment postComment = this.postCommentService.create(post,
                 postCommentForm.getContent(), customer);
         return String.format("redirect:/post/detail/%s#postcomment_%s",
                 postComment.getPost().getId(), postComment.getId());
+    }
+
+//    @PreAuthorize("isAuthenticated()")
+//    @PostMapping("/subcomment")
+//    public String addsubcomment(Model model,@RequestParam Long id,  Principal principal, @RequestBody  String content){
+//        Post post = this.postService.getPost(id);
+//        model.addAttribute("post", post);
+//
+//        Customer customer =  this.customerService.findByusername(principal.getName());
+//        this.postCommentService.newsubcommet(post,customer,content, id);
+//
+//        return "redirect:/post/detail/" + id;
+//    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/subcomment")
+    public String addsubcommed(Model model,@RequestParam Long id, Principal principal, @RequestParam String content, @RequestParam Long commentid){
+        Post post = this.postService.getPost(id);
+        model.addAttribute("post", post);
+
+        List<PostComment> postCommentList = this.postCommentService.findByPost(id);
+//        System.out.println("comment값 : " + postCommentList);
+        model.addAttribute("postCommentList",postCommentList);
+
+
+        Customer customer =   this.customerService.findByusername(principal.getName());
+        this.postCommentService.newsubcommet(post,customer,content,commentid);
+
+        return "redirect:/post/detail/" + id;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -54,7 +84,7 @@ public class PostCommentController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         postCommentForm.setContent(postComment.getContent());
-        return "Post/postcomment_form";
+        return "Board/postcomment_form";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -62,7 +92,7 @@ public class PostCommentController {
     public String answerModify(@Valid PostCommentForm postCommentForm, BindingResult bindingResult,
                                @PathVariable("id") Long id, Principal principal) {
         if (bindingResult.hasErrors()) {
-            return "Post/postcomment_form";
+            return "Board/postcomment_form";
         }
         PostComment postComment = this.postCommentService.getpostComment(id);
         if (!postComment.getCustomer().getUsername().equals(principal.getName())) {

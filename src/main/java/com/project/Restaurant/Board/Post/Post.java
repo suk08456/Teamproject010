@@ -1,12 +1,11 @@
-package com.project.Restaurant.Post;
+package com.project.Restaurant.Board.Post;
 
-import com.project.Restaurant.CommentAnswer.Answer;
 import com.project.Restaurant.Member.consumer.Customer;
-import com.project.Restaurant.PostComment.PostComment;
+import com.project.Restaurant.Board.PostComment.PostComment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,9 +35,6 @@ public class Post {
   @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
   private List<PostComment> postCommentList;
 
-  @OneToMany(cascade = CascadeType.REMOVE)
-  private List<Answer> answerList;
-
   private LocalDateTime modifyDate;
 
   @ManyToMany
@@ -46,6 +42,8 @@ public class Post {
 
   @Column(columnDefinition = "Integer default 0")
   private Long view;
+
+
 
 }
 

@@ -1,5 +1,6 @@
-package com.project.Restaurant.Post;
+package com.project.Restaurant.Board.Post;
 
+import com.project.Restaurant.Board.PostComment.PostComment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,4 +32,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             + "   or a.content like %:kw% "
             + "   or u2.username like %:kw% ")
     Page<Post> findAllByKeyword(@Param("kw") String kw, Pageable pageable);
+
 }
